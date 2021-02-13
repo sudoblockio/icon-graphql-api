@@ -1,0 +1,7 @@
+version: "3.3"
+
+services:
+  icon-graphql-api:
+    build: .
+    ports:
+      - "8000:8000"

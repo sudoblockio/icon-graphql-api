@@ -1,0 +1,12 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Block {
+  hash: String!
+  height: Int!
+}
+
+type Query {
+  blocks: [Block!]!
+}
