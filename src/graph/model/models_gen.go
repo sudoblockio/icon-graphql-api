@@ -3,6 +3,16 @@
 package model
 
 type Block struct {
-	Hash   string `json:"hash"`
-	Height int    `json:"height"`
+	Hash             string `json:"hash"`
+	Number           int    `json:"number"`
+	Signature        string `json:"signature"`
+	ItemID           string `json:"item_id"`
+	TransactionCount int    `json:"transaction_count"`
+	Type             string `json:"type"`
+	Version          string `json:"version"`
+	PeerID           string `json:"peer_id"`
+	MerkleRootHash   string `json:"merkle_root_hash"`
+	ItemTimestamp    string `json:"item_timestamp"`
+	ParentHash       string `json:"parent_hash"`
+	Timestamp        int    `json:"timestamp"`
 }

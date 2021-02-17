@@ -19,4 +19,7 @@ docker run \
 
 | Name | Description | Default | Required |
 |------|-------------|---------|----------|
+| ICON_GRAPHQL_API_MONGODB_URL | URL of hosted mongodb service | NULL | True |
+| ICON_GRAPHQL_API_MONGODB_USER | Username of hosted mongodb service | NULL | True |
+| ICON_GRAPHQL_API_MONGODB_PASS | Password of hosetd mongodb service | NULL | True |
 | ICON_GRAPHQL_API_PORT | Exposed port for the graphql server | 8000 | False |

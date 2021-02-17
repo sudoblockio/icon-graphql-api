@@ -4,9 +4,20 @@
 
 type Block {
   hash: String!
-  height: Int!
+  number: Int!
+  signature: String!
+  item_id: String!
+  transaction_count: Int!
+  type: String!
+  version: String!
+  peer_id: String!
+  merkle_root_hash: String!
+  item_timestamp: String!
+  parent_hash: String!
+  timestamp: Int!
 }
 
 type Query {
+  block(hash: String!): Block!
   blocks: [Block!]!
 }
