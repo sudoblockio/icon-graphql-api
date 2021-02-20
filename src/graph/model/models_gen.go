@@ -17,6 +17,20 @@ type Block struct {
 	Timestamp        int    `json:"timestamp"`
 }
 
+type Log struct {
+	Address          string   `json:"address"`
+	Data             []string `json:"data"`
+	Indexed          []string `json:"indexed"`
+	ItemID           string   `json:"item_id"`
+	BlockTimestamp   int      `json:"block_timestamp"`
+	BlockNumber      int      `json:"block_number"`
+	BlockHash        string   `json:"block_hash"`
+	TransactionIndex int      `json:"transaction_index"`
+	Type             string   `json:"type"`
+	ItemTimestamp    string   `json:"item_timestamp"`
+	TransactionHash  string   `json:"transaction_hash"`
+}
+
 type Transaction struct {
 	Signature                 string `json:"signature"`
 	Fee                       int    `json:"fee"`

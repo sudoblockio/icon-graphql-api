@@ -41,10 +41,26 @@ type Transaction {
   hash: String!
 }
 
+type Log {
+  address: String!
+  data: [String!]!
+  indexed: [String!]!
+  item_id: String!
+  block_timestamp: Int!
+  block_number: Int!
+  block_hash: String!
+  transaction_index: Int!
+  type: String!
+  item_timestamp: String!
+  transaction_hash: String!
+}
+
 type Query {
   block(hash: String!): Block!
   blocks: [Block!]!
 
   transaction(hash: String!): Transaction!
   transactions: [Transaction!]!
+
+  logs(transaction_hash: String!): [Log!]!
 }

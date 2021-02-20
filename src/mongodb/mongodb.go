@@ -92,3 +92,23 @@ func (db *DB) AllTransactions() ([]*model.Transaction, error) {
 	}
 	return transactions, nil
 }
+
+func (db *DB) FindLogsByTransactionHash(transactionHash string) ([]*model.Log, error) {
+	collection := db.client.Database("icon").Collection("logs")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	cur, err := collection.Find(ctx, bson.M{"transaction_hash": transactionHash})
+	if err != nil {
+		return nil, err
+	}
+	var logs []*model.Log
+	for cur.Next(ctx) {
+		var log *model.Log
+		err := cur.Decode(&log)
+		if err != nil {
+			return nil, err
+		}
+		logs = append(logs, log)
+	}
+	return logs, nil
+}

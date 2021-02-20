@@ -46,6 +46,15 @@ func (r *queryResolver) Transactions(ctx context.Context) ([]*model.Transaction,
 	return transactions, err
 }
 
+func (r *queryResolver) Logs(ctx context.Context, transactionHash string) ([]*model.Log, error) {
+	logs, err := mongodb.DBConnection.FindLogsByTransactionHash(transactionHash)
+	if err != nil {
+		return nil, err
+	}
+
+	return logs, err
+}
+
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
