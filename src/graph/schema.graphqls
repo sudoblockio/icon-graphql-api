@@ -17,7 +17,34 @@ type Block {
   timestamp: Int!
 }
 
+type Transaction {
+  signature: String!
+  fee: Int!
+  block_number: Int!
+  transaction_index: Int!
+  type: String!
+  receipt_step_price: Int!
+  from_address: String!
+  value: Int!
+  timestamp: String!
+  receipt_status: Int!
+  item_id: String!
+  receipt_logs: String!
+  block_hash: String!
+  to_address: String!
+  version: String!
+  nonce: Int!
+  receipt_cumulative_step_used: Int!
+  receipt_score_address: String!
+  data_type: String!
+  item_timestamp: String!
+  hash: String!
+}
+
 type Query {
   block(hash: String!): Block!
   blocks: [Block!]!
+
+  transaction(hash: String!): Transaction!
+  transactions: [Transaction!]!
 }

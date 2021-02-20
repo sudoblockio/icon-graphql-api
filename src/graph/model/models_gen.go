@@ -16,3 +16,27 @@ type Block struct {
 	ParentHash       string `json:"parent_hash"`
 	Timestamp        int    `json:"timestamp"`
 }
+
+type Transaction struct {
+	Signature                 string `json:"signature"`
+	Fee                       int    `json:"fee"`
+	BlockNumber               int    `json:"block_number"`
+	TransactionIndex          int    `json:"transaction_index"`
+	Type                      string `json:"type"`
+	ReceiptStepPrice          int    `json:"receipt_step_price"`
+	FromAddress               string `json:"from_address"`
+	Value                     int    `json:"value"`
+	Timestamp                 string `json:"timestamp"`
+	ReceiptStatus             int    `json:"receipt_status"`
+	ItemID                    string `json:"item_id"`
+	ReceiptLogs               string `json:"receipt_logs"`
+	BlockHash                 string `json:"block_hash"`
+	ToAddress                 string `json:"to_address"`
+	Version                   string `json:"version"`
+	Nonce                     int    `json:"nonce"`
+	ReceiptCumulativeStepUsed int    `json:"receipt_cumulative_step_used"`
+	ReceiptScoreAddress       string `json:"receipt_score_address"`
+	DataType                  string `json:"data_type"`
+	ItemTimestamp             string `json:"item_timestamp"`
+	Hash                      string `json:"hash"`
+}

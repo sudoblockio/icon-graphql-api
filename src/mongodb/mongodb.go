@@ -33,32 +33,62 @@ func ConnectClient(url string, user string, pass string) {
 	}
 }
 
-func (db *DB) FindByID(hash string) *model.Block {
+func (db *DB) FindBlockByHash(hash string) (*model.Block, error) {
 	collection := db.client.Database("icon").Collection("blocks")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	res := collection.FindOne(ctx, bson.M{"hash": hash})
 	block := model.Block{}
 	res.Decode(&block)
-	return &block
+	return &block, nil
 }
 
-func (db *DB) All() []*model.Block {
+func (db *DB) AllBlocks() ([]*model.Block, error) {
 	collection := db.client.Database("icon").Collection("blocks")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	cur, err := collection.Find(ctx, bson.D{})
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	var blocks []*model.Block
 	for cur.Next(ctx) {
 		var block *model.Block
 		err := cur.Decode(&block)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 		blocks = append(blocks, block)
 	}
-	return blocks
+	return blocks, nil
+}
+
+func (db *DB) FindTransactionByHash(hash string) (*model.Transaction, error) {
+	collection := db.client.Database("icon").Collection("transactions")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	res := collection.FindOne(ctx, bson.M{"hash": hash})
+	transaction := model.Transaction{}
+	res.Decode(&transaction)
+	return &transaction, nil
+}
+
+func (db *DB) AllTransactions() ([]*model.Transaction, error) {
+	collection := db.client.Database("icon").Collection("transactions")
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	cur, err := collection.Find(ctx, bson.D{})
+	if err != nil {
+		return nil, err
+	}
+	var transactions []*model.Transaction
+	for cur.Next(ctx) {
+		var transaction *model.Transaction
+		err := cur.Decode(&transaction)
+		if err != nil {
+			return nil, err
+		}
+		transactions = append(transactions, transaction)
+	}
+	return transactions, nil
 }

@@ -11,11 +11,39 @@ import (
 )
 
 func (r *queryResolver) Block(ctx context.Context, hash string) (*model.Block, error) {
-	return mongodb.DBConnection.FindByID(hash), nil
+	block, err := mongodb.DBConnection.FindBlockByHash(hash)
+	if err != nil {
+		return nil, err
+	}
+
+	return block, nil
 }
 
 func (r *queryResolver) Blocks(ctx context.Context) ([]*model.Block, error) {
-	return mongodb.DBConnection.All(), nil
+	blocks, err := mongodb.DBConnection.AllBlocks()
+	if err != nil {
+		return nil, err
+	}
+
+	return blocks, nil
+}
+
+func (r *queryResolver) Transaction(ctx context.Context, hash string) (*model.Transaction, error) {
+	transaction, err := mongodb.DBConnection.FindTransactionByHash(hash)
+	if err != nil {
+		return nil, err
+	}
+
+	return transaction, err
+}
+
+func (r *queryResolver) Transactions(ctx context.Context) ([]*model.Transaction, error) {
+	transactions, err := mongodb.DBConnection.AllTransactions()
+	if err != nil {
+		return nil, err
+	}
+
+	return transactions, err
 }
 
 // Query returns generated.QueryResolver implementation.
