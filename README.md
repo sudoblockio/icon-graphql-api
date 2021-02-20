@@ -1,6 +1,6 @@
 # Icon GraphQL API
 
-Docker hub [image](https://hub.docker.com/r/pranavt61/kafka-websocket-server)
+Docker hub [image](https://hub.docker.com/r/pranavt61/icon-graphql-api)
 
 ## Local build
 ```
