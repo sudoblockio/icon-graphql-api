@@ -23,3 +23,4 @@ docker run \
 | ICON_GRAPHQL_API_MONGODB_USER | Username of hosted mongodb service | NULL | True |
 | ICON_GRAPHQL_API_MONGODB_PASS | Password of hosetd mongodb service | NULL | True |
 | ICON_GRAPHQL_API_PORT | Exposed port for the graphql server | 8000 | False |
+| ICON_GRAPHQL_API_PREFIX | Prefix for all endpoints exposed | "" | False |

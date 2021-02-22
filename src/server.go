@@ -19,6 +19,7 @@ func main() {
 	mongodb_url_env := os.Getenv("ICON_GRAPHQL_API_MONGODB_URL")
 	mongodb_user_env := os.Getenv("ICON_GRAPHQL_API_MONGODB_USER")
 	mongodb_pass_env := os.Getenv("ICON_GRAPHQL_API_MONGODB_PASS")
+	prefix_env := os.Getenv("ICON_GRAPHQL_API_PREFIX")
 	port_env := os.Getenv("ICON_GRAPHQL_API_PORT")
 
 	if mongodb_url_env == "" {
@@ -33,15 +34,18 @@ func main() {
 	if port_env == "" {
 		port_env = defaultPort
 	}
+	if port_env == "" {
+		port_env = ""
+	}
 
 	mongodb.ConnectClient(mongodb_url_env, mongodb_user_env, mongodb_pass_env)
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 
-	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	http.Handle(prefix_env+"/", playground.Handler("GraphQL playground", prefix_env+"/query"))
+	http.Handle(prefix_env+"/query", srv)
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port_env)
+	log.Printf("connect to http://localhost:%s%s/ for GraphQL playground", port_env, prefix_env)
 	log.Fatal(http.ListenAndServe(":"+port_env, nil))
 
 }
