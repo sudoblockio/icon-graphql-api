@@ -35,6 +35,8 @@ func ConnectClient(url string, user string, pass string) error {
 	DBConnection = &DB{
 		client: client,
 	}
+
+	return nil
 }
 
 func (db *DB) FindBlockByHash(hash string) (*model.Block, error) {
