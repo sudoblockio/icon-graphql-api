@@ -18,7 +18,7 @@ jobs:
         run: docker-compose -f docker-compose.yml ps
 
       - name: Check logs
-        run: docker-compose -f docker-compose.yml logs icon-registration-websocket-server
+        run: docker-compose -f docker-compose.yml logs icon-graphql-api
 
       - name: Run test suite
         run: docker-compose -f docker-compose.yml run icon-graphql-api go test ./... -v -timeout 15m
