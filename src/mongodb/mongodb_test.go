@@ -3,8 +3,6 @@ package mongodb
 import (
 	"os"
 	"testing"
-
-	"pranavt61/icon-graphql-api/graph/model"
 )
 
 func TestConnectClient(t *testing.T) {
@@ -40,7 +38,7 @@ func TestFindBlockByHash(t *testing.T) {
 
 	// Find block
 	// Mock data inserted at mongodb/init/mock.js
-	block, err := DBConnection.FindBlockByHash("TestHash1")
+	block, err := DBConnection.FindBlockByHash("4d7b862e4f49d23ca445a5df4e44585c9822563f115e60d0f544372797192102")
 	if err != nil {
 		t.Errorf("Failed to query mongodb: %s", err.Error())
 
@@ -48,7 +46,8 @@ func TestFindBlockByHash(t *testing.T) {
 		return
 	}
 
-	if block.Hash != "TestHash1" {
+	if block.Hash != "4d7b862e4f49d23ca445a5df4e44585c9822563f115e60d0f544372797192102" ||
+		block.Number != 10000019 {
 		t.Errorf("Failed to validate mongodb data")
 	}
 
