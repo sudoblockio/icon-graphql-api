@@ -1,0 +1,7 @@
+db.blocks.save({ hash: "0xTestHash1", number: 10000000})
+db.blocks.save({ hash: "0xTestHash2", number: 10000000})
+db.blocks.save({ hash: "0xTestHash3", number: 10000000})
+db.blocks.save({ hash: "0xTestHash4", number: 10000000})
+db.blocks.save({ hash: "0xTestHash5", number: 10000000})
+db.blocks.save({ hash: "0xTestHash6", number: 10000000})
+db.blocks.save({ hash: "0xTestHash7", number: 10000000})
