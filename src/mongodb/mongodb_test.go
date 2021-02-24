@@ -1,6 +1,7 @@
 package mongodb
 
 import (
+	"fmt"
 	"os"
 	"testing"
 )
@@ -90,4 +91,39 @@ func TestAllBlocks(t *testing.T) {
 
 	// Pass
 	return
+}
+
+func TestFindTransactionByHash(t *testing.T) {
+	mongodb_url_env := os.Getenv("ICON_GRAPHQL_API_MONGODB_URL")
+	mongodb_user_env := os.Getenv("ICON_GRAPHQL_API_MONGODB_USER")
+	mongodb_pass_env := os.Getenv("ICON_GRAPHQL_API_MONGODB_PASS")
+
+	err := ConnectClient(mongodb_url_env, mongodb_user_env, mongodb_pass_env)
+	if err != nil {
+		t.Errorf("Failed to connect mongo client: %s", err.Error())
+
+		// Fail
+		return
+	}
+
+	// Find block
+	// Mock data inserted at mongodb/init/mock.js
+	transaction, err := DBConnection.FindTransactionByHash("0xc3528666aa2f5e5cca5fe9c8121ccf1593eb844bf56246ec1a9d3ec202bd3f77")
+	if err != nil {
+		t.Errorf("Failed to query mongodb: %s", err.Error())
+
+		// Fail
+		return
+	}
+
+	if transaction.Hash != "0xc3528666aa2f5e5cca5fe9c8121ccf1593eb844bf56246ec1a9d3ec202bd3f77" {
+		t.Errorf("Failed to validate transaction")
+
+		// Fail
+		return
+	}
+
+	// Pass
+	return
+
 }
