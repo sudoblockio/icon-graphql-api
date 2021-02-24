@@ -19,15 +19,20 @@ type DB struct {
 
 var DBConnection *DB
 
-func ConnectClient(url string, user string, pass string) {
+func ConnectClient(url string, user string, pass string) error {
 	connection_uri := fmt.Sprintf("mongodb://%s:%s@%s", user, pass, url)
 	client, err := mongo.NewClient(options.Client().ApplyURI(connection_uri))
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	err = client.Connect(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Set global client
 	DBConnection = &DB{
 		client: client,
 	}
