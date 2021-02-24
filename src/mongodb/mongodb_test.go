@@ -160,3 +160,37 @@ func TestAllTransactions(t *testing.T) {
 	// Pass
 	return
 }
+
+func TestFindLogsByTransactionHash(t *testing.T) {
+	mongodb_url_env := os.Getenv("ICON_GRAPHQL_API_MONGODB_URL")
+	mongodb_user_env := os.Getenv("ICON_GRAPHQL_API_MONGODB_USER")
+	mongodb_pass_env := os.Getenv("ICON_GRAPHQL_API_MONGODB_PASS")
+
+	err := ConnectClient(mongodb_url_env, mongodb_user_env, mongodb_pass_env)
+	if err != nil {
+		t.Errorf("Failed to connect mongo client: %s", err.Error())
+
+		// Fail
+		return
+	}
+
+	// Find block
+	// Mock data inserted at mongodb/init/mock.js
+	logs, err := DBConnection.FindLogsByTransactionHash("0xc92f6cea710f2e420aab9c44f16c69502f5729f08412c1333ed54979a5ee4200")
+	if err != nil {
+		t.Errorf("Failed to query mongodb: %s", err.Error())
+
+		// Fail
+		return
+	}
+
+	if len(logs) == 0 {
+		t.Errorf("Failed to retrieve any logs")
+
+		// Fail
+		return
+	}
+
+	// Pass
+	return
+}
