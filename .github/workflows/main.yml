@@ -1,0 +1,24 @@
+name: Push to Master CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build the stack
+        run: docker-compose -f docker-compose.yml up -d
+
+      - name: Check running containers
+        run: docker-compose -f docker-compose.yml ps
+
+      - name: Check logs
+        run: docker-compose -f docker-compose.yml logs icon-registration-websocket-server
+
+      - name: Run test suite
+        run: docker-compose -f docker-compose.yml run icon-graphql-api go test ./... -v -timeout 15m
