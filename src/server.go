@@ -38,7 +38,11 @@ func main() {
 		port_env = ""
 	}
 
-	mongodb.ConnectClient(mongodb_url_env, mongodb_user_env, mongodb_pass_env)
+	err := mongodb.ConnectClient(mongodb_url_env, mongodb_user_env, mongodb_pass_env)
+	if err != nil {
+		log.Printf("Error connecting mongo client: %s", err.Error())
+		os.Exit(1)
+	}
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 
