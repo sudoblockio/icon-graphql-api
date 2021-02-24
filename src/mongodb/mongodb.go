@@ -19,6 +19,11 @@ type DB struct {
 var DBConnection *DB
 
 func ConnectClient(url string, user string, pass string) error {
+	// Check if connection already exists
+	if DBConnection != nil {
+		return nil
+	}
+
 	connection_uri := fmt.Sprintf("mongodb://%s:%s@%s", user, pass, url)
 	client, err := mongo.NewClient(options.Client().ApplyURI(connection_uri))
 	if err != nil {
