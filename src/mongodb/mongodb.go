@@ -54,11 +54,15 @@ func (db *DB) FindBlockByHash(hash string) (*model.Block, error) {
 	return &block, nil
 }
 
-func (db *DB) AllBlocks() ([]*model.Block, error) {
+func (db *DB) Blocks(skip int, limit int) ([]*model.Block, error) {
 	collection := db.client.Database("icon").Collection("blocks")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	cur, err := collection.Find(ctx, bson.D{})
+	findOptions := options.FindOptions{}
+	findOptions.SetSkip(int64(skip))
+	findOptions.SetLimit(int64(limit))
+	findOptions.SetSort(bson.D{{"number", -1}})
+	cur, err := collection.Find(ctx, bson.D{}, &findOptions)
 	if err != nil {
 		return nil, err
 	}

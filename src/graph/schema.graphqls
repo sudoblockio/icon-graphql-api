@@ -57,7 +57,7 @@ type Log {
 
 type Query {
   block(hash: String!): Block!
-  blocks: [Block!]!
+  blocks(skip: Int!, limit: Int!): [Block!]!
 
   transaction(hash: String!): Transaction!
   transactions: [Transaction!]!

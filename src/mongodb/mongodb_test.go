@@ -58,7 +58,7 @@ func TestFindBlockByHash(t *testing.T) {
 	return
 }
 
-func TestAllBlocks(t *testing.T) {
+func TestBlocks(t *testing.T) {
 	mongodb_url_env := os.Getenv("ICON_GRAPHQL_API_MONGODB_URL")
 	mongodb_user_env := os.Getenv("ICON_GRAPHQL_API_MONGODB_USER")
 	mongodb_pass_env := os.Getenv("ICON_GRAPHQL_API_MONGODB_PASS")
@@ -73,7 +73,7 @@ func TestAllBlocks(t *testing.T) {
 
 	// Find block
 	// Mock data inserted at mongodb/init/mock.js
-	blocks, err := DBConnection.AllBlocks()
+	blocks, err := DBConnection.Blocks(0, 1)
 	if err != nil {
 		t.Errorf("Failed to query mongodb: %s", err.Error())
 

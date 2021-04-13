@@ -19,8 +19,8 @@ func (r *queryResolver) Block(ctx context.Context, hash string) (*model.Block, e
 	return block, nil
 }
 
-func (r *queryResolver) Blocks(ctx context.Context) ([]*model.Block, error) {
-	blocks, err := mongodb.DBConnection.AllBlocks()
+func (r *queryResolver) Blocks(ctx context.Context, skip int, limit int) ([]*model.Block, error) {
+	blocks, err := mongodb.DBConnection.Blocks(skip, limit)
 	if err != nil {
 		return nil, err
 	}

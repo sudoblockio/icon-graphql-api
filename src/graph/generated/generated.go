@@ -73,7 +73,7 @@ type ComplexityRoot struct {
 
 	Query struct {
 		Block        func(childComplexity int, hash string) int
-		Blocks       func(childComplexity int) int
+		Blocks       func(childComplexity int, skip int, limit int) int
 		Logs         func(childComplexity int, transactionHash string) int
 		Transaction  func(childComplexity int, hash string) int
 		Transactions func(childComplexity int) int
@@ -106,7 +106,7 @@ type ComplexityRoot struct {
 
 type QueryResolver interface {
 	Block(ctx context.Context, hash string) (*model.Block, error)
-	Blocks(ctx context.Context) ([]*model.Block, error)
+	Blocks(ctx context.Context, skip int, limit int) ([]*model.Block, error)
 	Transaction(ctx context.Context, hash string) (*model.Transaction, error)
 	Transactions(ctx context.Context) ([]*model.Transaction, error)
 	Logs(ctx context.Context, transactionHash string) ([]*model.Log, error)
@@ -305,7 +305,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.Blocks(childComplexity), true
+		args, err := ec.field_Query_blocks_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Blocks(childComplexity, args["skip"].(int), args["limit"].(int)), true
 
 	case "Query.logs":
 		if e.complexity.Query.Logs == nil {
@@ -594,7 +599,7 @@ type Log {
 
 type Query {
   block(hash: String!): Block!
-  blocks: [Block!]!
+  blocks(skip: Int!, limit: Int!): [Block!]!
 
   transaction(hash: String!): Transaction!
   transactions: [Transaction!]!
@@ -636,6 +641,30 @@ func (ec *executionContext) field_Query_block_args(ctx context.Context, rawArgs 
 		}
 	}
 	args["hash"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_blocks_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["skip"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("skip"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["skip"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["limit"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg1
 	return args, nil
 }
 
@@ -1570,9 +1599,16 @@ func (ec *executionContext) _Query_blocks(ctx context.Context, field graphql.Col
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_blocks_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Blocks(rctx)
+		return ec.resolvers.Query().Blocks(rctx, args["skip"].(int), args["limit"].(int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
