@@ -22,8 +22,8 @@ func StartPrometheusHttpServer(port string, prefix string, network_name string, 
 
 	// Create gauges
 	Metrics["latest_block_number"] = promauto.NewGauge(prometheus.GaugeOpts{
-		Name:        "websockets_bytes_written",
-		Help:        "number of bytes sent over through websockets",
+		Name:        "latest_block_number",
+		Help:        "latest block number in mongodb",
 		ConstLabels: prometheus.Labels{"network_name": network_name},
 	})
 
