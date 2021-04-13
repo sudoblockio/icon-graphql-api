@@ -1,6 +1,8 @@
 package metrics
 
 import (
+	"context"
+	"log"
 	"net/http"
 	"time"
 
@@ -11,13 +13,15 @@ import (
 	"github.com/machinebox/graphql"
 )
 
-var Metrics map[string]prometheus.Counter
+var Metrics map[string]prometheus.Gauge
 
-func StartPrometheusHttpServer(port string, network_name string) {
-	Metrics = make(map[string]prometheus.Counter)
+func StartPrometheusHttpServer(port string, prefix string, network_name string, metrics_port string, metrics_poll_interval int) {
+	go metricsLoop(port, prefix, metrics_poll_interval)
+
+	Metrics = make(map[string]prometheus.Gauge)
 
 	// Create gauges
-	Metrics["latest_block_number"] = promauto.NewCounter(prometheus.CounterOpts{
+	Metrics["latest_block_number"] = promauto.NewGauge(prometheus.GaugeOpts{
 		Name:        "websockets_bytes_written",
 		Help:        "number of bytes sent over through websockets",
 		ConstLabels: prometheus.Labels{"network_name": network_name},
@@ -25,25 +29,33 @@ func StartPrometheusHttpServer(port string, network_name string) {
 
 	// Start server
 	http.Handle("/metrics", promhttp.Handler())
-	http.ListenAndServe(":"+port, nil)
+	http.ListenAndServe(":"+metrics_port, nil)
 }
 
-func metricsLoop(port string, prefix string, poll_interval int) {
-	client := graphql.NewClient("localhost:" + port + prefix + "/query")
+func metricsLoop(port string, prefix string, metrics_poll_interval int) {
+	client := graphql.NewClient("http://localhost:" + port + prefix + "/query")
 
 	for {
-		time.Sleep(poll_interval * time.Second)
+		time.Sleep(time.Duration(metrics_poll_interval) * time.Second)
 
 		// Check latest block number
 		req := graphql.NewRequest(`
-				query ($key: String!) {
-						items (id:$key) {
-								field1
-								field2
-								field3
-						}
+			query {
+				blocks(skip: 0, limit: 1){
+					number
 				}
+			}	
 		`)
+		var respData interface{}
+		err := client.Run(context.Background(), req, &respData)
+		if err != nil {
+			log.Println("ERROR: ", err.Error())
 
+			Metrics["latest_block_number"].Set(0)
+		} else {
+			block_number := respData.(map[string]interface{})["blocks"].([]interface{})[0].(map[string]interface{})["number"].(float64)
+
+			Metrics["latest_block_number"].Set(block_number)
+		}
 	}
 }

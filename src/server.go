@@ -4,41 +4,27 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"pranavt61/icon-graphql-api/graph"
-	"pranavt61/icon-graphql-api/graph/generated"
-	"pranavt61/icon-graphql-api/mongodb"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+
+	"pranavt61/icon-graphql-api/graph"
+	"pranavt61/icon-graphql-api/graph/generated"
+	"pranavt61/icon-graphql-api/metrics"
+	"pranavt61/icon-graphql-api/mongodb"
 )
 
 const defaultPort = "8000"
 
 func main() {
 
-	mongodb_url_env := os.Getenv("ICON_GRAPHQL_API_MONGODB_URL")
-	mongodb_user_env := os.Getenv("ICON_GRAPHQL_API_MONGODB_USER")
-	mongodb_pass_env := os.Getenv("ICON_GRAPHQL_API_MONGODB_PASS")
-	prefix_env := os.Getenv("ICON_GRAPHQL_API_PREFIX")
-	port_env := os.Getenv("ICON_GRAPHQL_API_PORT")
+	// Get enviroment variables
+	env := getEnvironment()
 
-	if mongodb_url_env == "" {
-		panic("ERROR: missing required enviroment variable: ICON_GRAPHQL_API_MONGODB_URL")
-	}
-	if mongodb_user_env == "" {
-		panic("ERROR: missing required enviroment variable: ICON_GRAPHQL_API_MONGODB_USER")
-	}
-	if mongodb_pass_env == "" {
-		panic("ERROR: missing required enviroment variable: ICON_GRAPHQL_API_MONGODB_PASS")
-	}
-	if port_env == "" {
-		port_env = defaultPort
-	}
-	if port_env == "" {
-		port_env = ""
-	}
+	// Start prometheus client
+	go metrics.StartPrometheusHttpServer(env.Port, env.Prefix, env.NetworkName, env.MetricsPort, env.MetricsPollInterval)
 
-	err := mongodb.ConnectClient(mongodb_url_env, mongodb_user_env, mongodb_pass_env)
+	err := mongodb.ConnectClient(env.MongodbUrl, env.MongodbUser, env.MongodbPass)
 	if err != nil {
 		log.Printf("Error connecting mongo client: %s", err.Error())
 		os.Exit(1)
@@ -46,10 +32,10 @@ func main() {
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 
-	http.Handle(prefix_env+"/", playground.Handler("GraphQL playground", prefix_env+"/query"))
-	http.Handle(prefix_env+"/query", srv)
+	http.Handle(env.Prefix+"/", playground.Handler("GraphQL playground", env.Prefix+"/query"))
+	http.Handle(env.Prefix+"/query", srv)
 
-	log.Printf("connect to http://localhost:%s%s/ for GraphQL playground", port_env, prefix_env)
-	log.Fatal(http.ListenAndServe(":"+port_env, nil))
+	log.Printf("connect to http://localhost:%s%s/ for GraphQL playground", env.Port, env.Prefix)
+	log.Fatal(http.ListenAndServe(":"+env.Port, nil))
 
 }
